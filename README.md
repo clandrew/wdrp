@@ -14,7 +14,7 @@ This plugin is for Windows 7/Windows 10+ x86-compatible environments.
 
 Example:
 
-![Example of what plugin's effects are in Discord](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Example.png)
+![Winamp is shown running, playing a song, side-by-side with a Discord Rich Presence status indicator showing that song's name and artist](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Example.png)
 
 # Frequently Asked Questions (F.A.Q.'s)
 **Q: Winamp, really? In {current year}?**
@@ -33,41 +33,41 @@ Visit [discordapp.com/developers/applications/](discordapp.com/developers/applic
 
 You'll see something like:
 
-![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup00.png)
+![A view of the Applications tab of the Discord Developer Portal, with a button that says Create an application](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup00.png)
 
 Click "**Create an application**". You can give it a name like "Winamp".
 
-![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup01.png)
+![An image of a dialog box titled Create an application. The user is typing in the text, Winamp. There are buttons labeled Create and Cancel](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup01.png)
 
 Afterward, you'll be taken to a screen to configure the application. You can set an icon, if you want. I got one from [here](https://commons.wikimedia.org/wiki/File:Winamp-logo.png).
 
-![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup02.png)
+![A view of the Applications tab of the Discord Developer Portal; viewing the General Information tab for the Winamp application. The screeenshot shows the Winamp Application's name as Winamp, and a CLIENT ID. An example ID of 112233445566778899 is shown.](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup02.png)
 
 The only thing to do here is to take note of the **Client ID**, also called an **Application ID**, since you'll need it later.
 
 2. In Discord settings, go to **Game Activity** and set Winamp as a game if you have not already. An easy way to do that is to run Winamp, and then click the **Add it!** button.
 
-![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup03.png)
+![A view of Discord Settings, at the Game Activity tab. There is a header GAME ACTIVITY, a message of no game detected, and a message of Not seeing your game? Add it! where Add it! is clickable and there is an arrow pointing to it.](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup03.png)
 
 3. To install the Winamp plugin, unzip the release folder and copy the results to the Plugins folder of your Winamp installation as shown.
 
 Most often, the Plugins folder is located at **C:\Program Files (x86)\Winamp\Plugins**.
 
-![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup04.PNG)
+![Two Windows file folders are shown; one for the Winamp Plugins install folder and one for the unzipped plugin release. Arrows are showing that the plugin release files are copied into the Winamp Plugins folder.](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup04.PNG)
 
 When you're done, there should be a file **gen_DiscordRichPresence.dll** in the Plugins folder, plus a folder inside that called DiscordRichPresence.
 
 4. Now open Winamp (or restart it if it was already open), and go to **Preferences**.
 
-![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup05.png)
+![Winamp is shown running, where the user has clicked the menu button, moused-over the Options menu, and is about to click Preferences. Preferences can also be accessed with Ctrl+P.](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup05.png)
 
 Under the Plug-ins tab, under General Purpose, the "Discord Rich Presence" item should appear. If it does, the plug-in was successfully installed!
 
-![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup06.PNG)
+![The Winamp Preferences window is shown. There are some Preferences categories, such as Media Library, Skins and Plug-ins. Under the Plug-ins category, the user has clicked the General Purpose sub-category. There's a listing of General Purpose plugins, and Discord Rich Presence, labeled gen_DiscordRichPresence.dll, is at the top, selected. There are buttons labeled Configure selected plug-in and Uninstall selected plug-in. There's an arrow pointing to the Configure selected plug-in button.](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup06.PNG)
 
 Click the button **Configure selected plug-in.**
 
-![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup07.PNG)
+![There is a model dialog box titled Discord Rich Presence. In it, there is a checkbox labeled Display currently-playing title in Discord status. The checkbox is checked. Also, there is a text box labeled Discord Application ID. In the text box, the user has filled in the text 112233445566778899. There are buttons OK and Cancel.](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup07.PNG)
 
 On this menu, paste the Discord **Application ID** from before. Also, you can check or un-check the box depending on whether you are comfortable showing the currently-playing media on Discord.
 
