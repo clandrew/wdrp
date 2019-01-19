@@ -73,6 +73,10 @@ Click OK, and you're done!
 
 A: No, nothing asks for your credentials.
 
+**Q: How come the status says *Playing a game* instead of *Listening to* like with Spotify?**
+
+A: The Discord RPC library doesn't currently expose a way of changing these. The status for Spotify works because Discord gives Spotify special treatment. If it comes to be that the RPC library adds flexibility of changing this, I'd be interested.
+
 **Q: If I want to build the plugin, what type of environment do I use?**
 
 A: The plugin is built using Visual Studio 2017 on a Windows 10 environment. It uses the v141 toolset and SDK version 10.0.17134.0.
