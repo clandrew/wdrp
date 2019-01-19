@@ -8,6 +8,10 @@ Features:
 
 Tested on Winamp version 5.623 (x86) on Windows 10 environment.
 
+Example:
+
+![Example of what plugin's effects are in Discord](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Example.png)
+
 # Frequently Asked Questions (F.A.Q.'s)
 **Q: Winamp, really? In {current year}?**
 
@@ -15,17 +19,63 @@ A: Yeah... Some people like it.
 
 **Q: How do I set it up?**
 
-A: Please see the setup instructions. The short version, is you
-1. Set up a Discord application attached to your Discord account through their web site.
-2. In Discord, designate Winamp as a game
-3. Install the Winamp plugin
-4. In the plugin menu, set the Discord "application ID" to the application you created in Step 1.
+A: The short version is you set up a Discord application attached to your Discord account through their web site. Then in Discord, designate Winamp as a game. Install the Winamp plugin. Then, in the plugin menu, set the Discord "application ID" to the application you created.
 
-That's basically it.
+Here's step-by-step instructions, with more details:
+
+1. Log in to the Discord web app.
+
+Visit [discordapp.com/developers/applications/](discordapp.com/developers/applications/).
+
+You'll see something like:
+
+![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup00.png)
+
+Click "*Create an application*". You can give it a name like "Winamp".
+
+![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup01.png)
+
+Afterward, you'll be taken to a screen to configure the application. You can set an icon, if you want. I got one from [here](https://commons.wikimedia.org/wiki/File:Winamp-logo.png).
+
+![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup02.png)
+
+The only thing to do here is to take note of the *Client ID*, also called an *Application ID*, since you'll need it later.
+
+2. In Discord settings, go to **Game Activity** and set Winamp as a game if you have not already. An easy way to do that is to run Winamp, and then click the **Add it!** button.
+
+![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup03.png)
+
+3. To install the Winamp plugin, unzip the release folder and copy the results to the Plugins folder of your Winamp installation as shown.
+
+Most often, the Plugins folder is located at **C:\Program Files (x86)\Winamp\Plugins**.
+
+![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup04.PNG)
+
+When you're done, there should be a file gen_DiscordRichPresence.dll in the Plugins folder, plus a folder inside that called DiscordRichPresence.
+
+4. Now open Winamp (or restart it if it was already open), and go to Preferences.
+
+![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup05.png)
+
+Under the Plug-ins tab, under General Purpose, the "Discord Rich Presence" item should appear. If it does, the plug-in was successfully installed!
+
+![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup06.PNG)
+
+Click the button **Configure selected plug-in.**
+
+![Setup instructional image](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup07.PNG)
+
+On this menu, paste the Discord Application ID from before. Also, you can check or un-check the box depending on whether you are comfortable showing the currently-playing media on Discord.
+
+Click OK, and you're done!
 
 **Q: Do I need to give the application my Discord credentials?**
 
 A: No, nothing asks for your credentials.
+
+**Q: If I want to build the plugin, what type of environment do I use?**
+
+A: The plugin is built using Visual Studio 2017 on a Windows 10 environment. It uses the v141 toolset and SDK version 10.0.17134.0.
 
 **Q: I have a question or other comment.**
 
