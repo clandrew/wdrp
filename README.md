@@ -21,11 +21,13 @@ Example:
 
 A: Yeah. Some people like it :P
 
+**Q: How does it work?**
+
+A: This is implemented as a Winamp plug-in which calls the Discord RPC API. The rich presence updates are sent to a Discord application which is associated with your Discord account.
+
 **Q: How do I set it up?**
 
-A: The short version is you set up a Discord application attached to your Discord account through their web site. Then in Discord, designate Winamp as a game. Install the Winamp plugin. Then, in the plugin menu, set the Discord "application ID" to the application you created.
-
-Here's step-by-step instructions, with more details:
+A: Here's step-by-step instructions:
 
 1. Log in to the Discord web app.
 
