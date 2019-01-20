@@ -19,7 +19,7 @@ Example:
 # Frequently Asked Questions (F.A.Q.'s)
 **Q: Winamp, really? In {current year}?**
 
-A: Yeah. Some people like it!
+A: Yeah. Some people like it :P
 
 **Q: How do I set it up?**
 
@@ -88,6 +88,10 @@ A: The Discord RPC library doesn't currently expose a way of changing this UI el
 **Q: Sometimes, I'm seeing a small delay before my Discord Rich Presence status is updated. What gives?**
 
 A: Discord thresholds the update frequency of the status text on its side. The frequency is every 15 seconds. [See this page for more information](https://discordapp.com/developers/docs/rich-presence/how-to#updating-presence).
+
+**Q: Is there a way to get it to show album art?**
+
+A: Offhand, I don't currently know if it's possible.
 
 **Q: If I want to build the plugin, what type of environment do I use?**
 
