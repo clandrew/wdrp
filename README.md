@@ -31,7 +31,7 @@ A: Here's step-by-step instructions:
 
 1. Log in to the Discord web app.
 
-Visit [discordapp.com/developers/applications/](discordapp.com/developers/applications/).
+Visit [discordapp.com/developers/applications/](http://www.discordapp.com/developers/applications/).
 
 You'll see something like:
 
