@@ -31,3 +31,7 @@
 *.out
 *.app
 *.aps
+DiscordRichPresence/Debug/*
+.vs/*
+*.ilk
+Debug/*
