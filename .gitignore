@@ -32,6 +32,9 @@
 *.app
 *.aps
 DiscordRichPresence/Debug/*
+DiscordRichPresence/Release/*
 .vs/*
 *.ilk
 Debug/*
+Release/*
+*.vcxproj.user
