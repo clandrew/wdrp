@@ -108,9 +108,40 @@ void InitDiscord()
     runCallbacksFn();
 }
 
+std::string GetExecutableFileName()
+{
+	char buffer[MAX_PATH];
+	(void)GetModuleFileNameA(NULL, buffer, MAX_PATH); // Result is ignored; empty string returned on failure
+
+	return std::string(buffer);
+}
+
+std::string GetExecutablePath()
+{
+	std::string executableFileName = GetExecutableFileName();
+	if (executableFileName.length() > 0)
+	{
+		return executableFileName.substr(0, executableFileName.find_last_of("\\/"));
+	}
+
+	return "";
+}
+
+std::string GetSettingsFilePath()
+{
+	std::string executablePath = GetExecutablePath();
+	if (executablePath.size() == 0)
+		return ""; // Couldn't load
+
+	std::string settingsFilePath = executablePath;
+	settingsFilePath.append("\\Plugins\\DiscordRichPresence\\settings.ini");
+	return settingsFilePath;
+}
+
 void SaveSettingsFile()
 {
-    std::ofstream settingsFileWrite("Plugins\\DiscordRichPresence\\settings.ini");
+	std::string settingsFilePath = GetSettingsFilePath();
+    std::ofstream settingsFileWrite(settingsFilePath);
     settingsFileWrite << "# Discord Rich Presence configuration" << "\n";
     settingsFileWrite << "#####################################" << "\n";
 
@@ -129,8 +160,10 @@ void LoadSettingsFile()
     pluginSettings.DisplayTitleInSettings = false;
     pluginSettings.ApplicationID = "0";
 
+	std::string settingsFilePath = GetSettingsFilePath();
+
     // Attempt to load settings file.
-    std::ifstream settingsFileRead("Plugins\\DiscordRichPresence\\settings.ini");
+    std::ifstream settingsFileRead(settingsFilePath);
     if (settingsFileRead.is_open())
     {
         while (settingsFileRead.good())
@@ -264,6 +297,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     if (lParam == IPC_PLAYING_FILE) 
     {
+		LoadSettingsFile();
+
         ReportCurrentSongStatus();
     }    
     else if (lParam == IPC_CB_MISC && wParam == IPC_CB_MISC_STATUS)
