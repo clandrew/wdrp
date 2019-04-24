@@ -110,37 +110,37 @@ void InitDiscord()
 
 std::string GetExecutableFileName()
 {
-	char buffer[MAX_PATH];
-	(void)GetModuleFileNameA(NULL, buffer, MAX_PATH); // Result is ignored; empty string returned on failure
+    char buffer[MAX_PATH];
+    (void)GetModuleFileNameA(NULL, buffer, MAX_PATH); // Result is ignored; empty string returned on failure
 
-	return std::string(buffer);
+    return std::string(buffer);
 }
 
 std::string GetExecutablePath()
 {
-	std::string executableFileName = GetExecutableFileName();
-	if (executableFileName.length() > 0)
-	{
-		return executableFileName.substr(0, executableFileName.find_last_of("\\/"));
-	}
+    std::string executableFileName = GetExecutableFileName();
+    if (executableFileName.length() > 0)
+    {
+        return executableFileName.substr(0, executableFileName.find_last_of("\\/"));
+    }
 
-	return "";
+    return "";
 }
 
 std::string GetSettingsFilePath()
 {
-	std::string executablePath = GetExecutablePath();
-	if (executablePath.size() == 0)
-		return ""; // Couldn't load
+    std::string executablePath = GetExecutablePath();
+    if (executablePath.size() == 0)
+        return ""; // Couldn't load
 
-	std::string settingsFilePath = executablePath;
-	settingsFilePath.append("\\Plugins\\DiscordRichPresence\\settings.ini");
-	return settingsFilePath;
+    std::string settingsFilePath = executablePath;
+    settingsFilePath.append("\\Plugins\\DiscordRichPresence\\settings.ini");
+    return settingsFilePath;
 }
 
 void SaveSettingsFile()
 {
-	std::string settingsFilePath = GetSettingsFilePath();
+    std::string settingsFilePath = GetSettingsFilePath();
     std::ofstream settingsFileWrite(settingsFilePath);
     settingsFileWrite << "# Discord Rich Presence configuration" << "\n";
     settingsFileWrite << "#####################################" << "\n";
@@ -160,7 +160,7 @@ void LoadSettingsFile()
     pluginSettings.DisplayTitleInSettings = false;
     pluginSettings.ApplicationID = "0";
 
-	std::string settingsFilePath = GetSettingsFilePath();
+    std::string settingsFilePath = GetSettingsFilePath();
 
     // Attempt to load settings file.
     std::ifstream settingsFileRead(settingsFilePath);
@@ -297,7 +297,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     if (lParam == IPC_PLAYING_FILE) 
     {
-		LoadSettingsFile();
+        LoadSettingsFile();
 
         ReportCurrentSongStatus();
     }    
