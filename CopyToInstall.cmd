@@ -9,10 +9,10 @@ set DEPLOY_PLUGIN_LOCALLY=0
 if NOT "%DEPLOY_PLUGIN_LOCALLY%"=="1" goto :end
 
 :: Set the environment variables below as needed.
-set REPOSITORY_DIR=C:\Users\Claire\source\repos\DiscordRichPresence
+set REPOSITORY_DIR=C:\Users\Claire\source\repos\wdrp
 set BUILD_CONFIGURATION=Debug
 set WINAMP_INSTALL_DIR=E:\Program Files (x86)\Winamp
-set DISCORD_RPC_LIBRARY_DIR=C:\Users\Claire\source\repos\DiscordRichPresence\discord-rpc
+set DISCORD_RPC_LIBRARY_DIR=C:\Users\Claire\source\repos\Resources\discord-rpc
 set COPY_SYMBOLS=0
 
 set BUILT_BINARY_DIR=%REPOSITORY_DIR%\%BUILD_CONFIGURATION%
