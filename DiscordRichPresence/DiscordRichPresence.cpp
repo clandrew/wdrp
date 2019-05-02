@@ -101,7 +101,7 @@ void InitDiscord()
     handlers.spectateGame = handleDiscordSpectateGame;
     handlers.joinRequest = handleDiscordJoinRequest;
 
-    std::string applicationID = pluginSettings.ApplicationID.c_str(); //"531760170058121217";
+    std::string applicationID = pluginSettings.ApplicationID.c_str();
     int autoRegister = 1;
     const char* noSteamID = nullptr;
     initializeFn(applicationID.c_str(), &handlers, autoRegister, noSteamID);
