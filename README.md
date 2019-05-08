@@ -10,7 +10,7 @@ Tested on
 - Winamp version 5.623 (x86)
 - Winamp version 5.8 Build 3660 (x86)
 
-This plugin is for Windows 7/Windows 10+ x86-compatible environments.
+This plugin is for Windows 7/8/10+ x86-compatible environments.
 
 Example:
 
@@ -97,8 +97,8 @@ A: Offhand, I don't currently know if it's possible.
 
 **Q: If I want to build the plugin, what type of environment do I use?**
 
-A: The plugin is built using Visual Studio 2017 on a Windows 10 environment. It uses the v141 toolset and SDK version 10.0.17134.0.
+A: The plugin is built using Visual Studio 2017 on a Windows 10 environment. It uses the v141 toolset and SDK version 10.0.17134.0. Other environments might work too.
 
 **Q: I have a question or other comment.**
 
-A: Please contact cmlandrews at gmail dot com. While I can't concretely promise to fulfil specific feature requests since I am busy with a day job, I am appreciative of your time taken to comment and might get to it, depending on what it is. Thank you for your feedback!
+A: Please contact cmlandrews at gmail dot com. Thank you for your feedback!
