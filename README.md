@@ -47,11 +47,7 @@ Afterward, you'll be taken to a screen to configure the application. You can set
 
 The only thing to do here is to take note of the **Client ID**, also called an **Application ID**, since you'll need it later.
 
-2. In Discord settings, go to **Game Activity** and set Winamp as a game if you have not already. An easy way to do that is to run Winamp, and then click the **Add it!** button.
-
-![A view of Discord Settings, at the Game Activity tab. There is a header GAME ACTIVITY, a message of no game detected, and a message of Not seeing your game? Add it! where Add it! is clickable and there is an arrow pointing to it.](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup03.png "A view of Discord Settings, at the Game Activity tab. There is a header GAME ACTIVITY, a message of no game detected, and a message of Not seeing your game? Add it! where Add it! is clickable and there is an arrow pointing to it.")
-
-3. To install the Winamp plugin, unzip the release folder and copy the results to the Plugins folder of your Winamp installation as shown.
+2. To install the Winamp plugin, unzip the release folder and copy the results to the Plugins folder of your Winamp installation as shown.
 
 Most often, the Plugins folder is located at **C:\Program Files (x86)\Winamp\Plugins**.
 
@@ -59,7 +55,7 @@ Most often, the Plugins folder is located at **C:\Program Files (x86)\Winamp\Plu
 
 When you're done, there should be a file **gen_DiscordRichPresence.dll** in the Plugins folder, plus a folder inside that called DiscordRichPresence.
 
-4. Now open Winamp (or restart it if it was already open), and go to **Preferences**.
+3. Now open Winamp (or restart it if it was already open), and go to **Preferences**.
 
 ![Winamp is shown running, where the user has clicked the menu button, moused-over the Options menu, and is about to click Preferences. Preferences can also be accessed with Ctrl+P.](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup05.png "Winamp is shown running, where the user has clicked the menu button, moused-over the Options menu, and is about to click Preferences. Preferences can also be accessed with Ctrl+P.")
 
