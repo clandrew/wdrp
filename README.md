@@ -91,6 +91,19 @@ A: Discord thresholds the update frequency of the status text on its side. The f
 
 A: Offhand, I don't currently know if it's possible.
 
+**Q: I can't seem to get the plug-in to start.**
+A: One thing to check, is if you close Winamp and go to your Winamp installation folder, i.e., 
+```
+C:\Program Files (x86)\Winamp\Plugins\DiscordRichPresence
+```
+Verify that settings.ini contains 
+ApplicationID:xxx (your Application/Client ID and not all zeores)
+
+you may need to edit it manually to set it. This is necessary if Winamp was run as a limited-privilege user without the permission to change the settings file in the plugin folder.
+
+**Q: I'm seeing problems when I re-name the Discord application then try to use it with Rich Presence.**
+A: I've seen this problem too. It appears to be a bug in Discord. The way I've found to work around it is to delete and re-create a new application with the right name.
+
 **Q: If I want to build the plugin, what type of environment do I use?**
 
 A: The plugin is built using Visual Studio 2017 on a Windows 10 environment. It uses the v141 toolset and SDK version 10.0.17134.0. Other environments might work too.
