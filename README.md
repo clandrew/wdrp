@@ -74,7 +74,7 @@ C:\Program Files (x86)\Winamp\Plugins\DiscordRichPresence\settings.ini, and veri
 ApplicationID:xxx (your Application/Client ID and not all zeores)
 You may have to do this if Winamp plugins don't have privilege to change files in their folder.
 
-Click OK, and you're done!
+Click OK, or save settings.ini, and you're done!
 
 **Q: If I want to use the plugin, do I need to build from source?**
 
