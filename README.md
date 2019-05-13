@@ -70,7 +70,10 @@ Click the button **Configure selected plug-in.**
 On this menu, paste the Discord **Application ID** from before. Also, you can check or un-check the box depending on whether you are comfortable showing the currently-playing media on Discord.
 
 Alternatively, you can close Winamp and edit the settings.ini file, e.g., in
-C:\Program Files (x86)\Winamp\Plugins\DiscordRichPresence\settings.ini, and verify it contains
+```
+C:\Program Files (x86)\Winamp\Plugins\DiscordRichPresence\settings.ini
+```
+and verify it contains
 ApplicationID:xxx (your Application/Client ID and not all zeores)
 You may have to do this if Winamp plugins don't have privilege to change files in their folder.
 
