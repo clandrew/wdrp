@@ -43,7 +43,7 @@ Click "**Create an application**". You can give it a name like "Winamp".
 
 Afterward, you'll be taken to a screen to configure the application. You can set an icon, if you want. I got one from [here](https://commons.wikimedia.org/wiki/File:Winamp-logo.png). 
 
-If you want to include a logo in the Rich Presence different from the icon, upload an asset for the application to "Rich Presence --> Art Assets" and name it "winamp-logo". It will show up to the left of the rich presence text. For an example of where the logo will show up, see "largeImageKey" described on [this page](https://discordapp.com/developers/docs/rich-presence/how-to).
+If you want to include a logo in the Rich Presence, upload an asset for the application to "Rich Presence --> Art Assets" and name it "winamp-logo". It will show up to the left of the rich presence text. For an example of where the logo will show up and what that looks like, see "largeImageKey" described on [this page](https://discordapp.com/developers/docs/rich-presence/how-to).
 
 ![A view of the Applications tab of the Discord Developer Portal; viewing the General Information tab for the Winamp application. The screeenshot shows the Winamp Application's name as Winamp, and a CLIENT ID. An example ID of 112233445566778899 is shown.](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup02.png "A view of the Applications tab of the Discord Developer Portal; viewing the General Information tab for the Winamp application. The screeenshot shows the Winamp Application's name as Winamp, and a CLIENT ID. An example ID of 112233445566778899 is shown.")
 
