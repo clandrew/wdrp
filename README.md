@@ -51,7 +51,7 @@ The only thing to do here is to take note of the **Client ID**, also called an *
 
 2. Download "Distribute.zip" from the latest plug-in release from GitHub [here](https://github.com/clandrew/wdrp/releases/).
 
-3. To install the Winamp plugin, unzip the release folder and copy the results to the Plugins folder of your Winamp installation as shown.
+3. To install the Winamp plugin, unzip Distribute.zip and copy the results to the Plugins folder of your Winamp installation as shown.
 
 Most often, the Plugins folder is located at **C:\Program Files (x86)\Winamp\Plugins**.
 
