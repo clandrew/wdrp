@@ -49,7 +49,9 @@ If you want to include a logo in the Rich Presence, upload an asset for the appl
 
 The only thing to do here is to take note of the **Client ID**, also called an **Application ID**, since you'll need it later.
 
-2. To install the Winamp plugin, unzip the release folder and copy the results to the Plugins folder of your Winamp installation as shown.
+2. Download "Distribute.zip" from the latest plug-in release from GitHub [here](https://github.com/clandrew/wdrp/releases/).
+
+3. To install the Winamp plugin, unzip the release folder and copy the results to the Plugins folder of your Winamp installation as shown.
 
 Most often, the Plugins folder is located at **C:\Program Files (x86)\Winamp\Plugins**.
 
@@ -57,7 +59,7 @@ Most often, the Plugins folder is located at **C:\Program Files (x86)\Winamp\Plu
 
 When you're done, there should be a file **gen_DiscordRichPresence.dll** in the Plugins folder, plus a folder inside that called DiscordRichPresence.
 
-3. Now open Winamp (or restart it if it was already open), and go to **Preferences**.
+4. Now open Winamp (or restart it if it was already open), and go to **Preferences**.
 
 ![Winamp is shown running, where the user has clicked the menu button, moused-over the Options menu, and is about to click Preferences. Preferences can also be accessed with Ctrl+P.](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup05.png "Winamp is shown running, where the user has clicked the menu button, moused-over the Options menu, and is about to click Preferences. Preferences can also be accessed with Ctrl+P.")
 
