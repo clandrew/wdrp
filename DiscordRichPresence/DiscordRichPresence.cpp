@@ -278,10 +278,9 @@ void ReportCurrentSongStatus()
     std::string detailsMessage;
     if (pluginSettings.DisplayTitleInSettings)
     {
-        std::wstring title = (wchar_t *)SendMessage(plugin.hwndParent, WM_WA_IPC, 0, IPC_GET_PLAYING_TITLE);
-        const std::string titleNarrow(title.begin(), title.end());
-
-        detailsMessage = titleNarrow;
+		std::wstring title = (wchar_t *)SendMessage(plugin.hwndParent, WM_WA_IPC, 0, IPC_GET_PLAYING_TITLE);
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> convertWideToUTF8;
+		detailsMessage = convertWideToUTF8.to_bytes(title);
     }
     else
     {
