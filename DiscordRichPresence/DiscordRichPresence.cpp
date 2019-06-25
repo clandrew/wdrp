@@ -26,6 +26,60 @@ Discord_UpdatePresenceFn updatePresenceFn{};
 Discord_RunCallbacksFn runCallbacksFn{};
 WNDPROC lpWndProcOld = 0;
 
+enum PlaybackState // Enumeration values set up to match IPC_ISPLAYING
+{
+	Stopped = 0,
+	Playing = 1,
+	Paused = 3
+};
+class PresenceInfo
+{
+	DiscordRichPresence m_presence;
+	std::string m_stateBuffer;
+	std::string m_detailsBuffer;
+
+public:
+	PresenceInfo()
+	{
+		memset(&m_presence, 0, sizeof(m_presence));
+		m_presence.largeImageKey = "winamp-logo";
+		m_presence.instance = 1;
+		CurrentPlaybackState = Stopped;
+	}
+	PlaybackState CurrentPlaybackState;
+
+	void SetStateText(char const* str)
+	{
+		m_stateBuffer = str;
+		m_presence.state = m_stateBuffer.c_str();
+	}
+
+	void SetDetails(char const* str)
+	{
+		m_detailsBuffer = str;
+		m_presence.details = m_detailsBuffer.c_str();
+	}
+
+	void ClearDetails()
+	{
+		m_detailsBuffer.clear();
+		m_presence.details = nullptr;
+	}
+
+	void SetStartTimestamp(__int64 timestamp)
+	{
+		m_presence.startTimestamp = timestamp;
+	}
+
+	void PostToDiscord()
+	{
+		updatePresenceFn(&m_presence);
+		runCallbacksFn();
+	}
+
+};
+std::unique_ptr<PresenceInfo> lastPresence;
+
 struct PluginSettings
 {
     bool DisplayTitleInSettings;
@@ -212,6 +266,23 @@ void LoadDiscordEntrypoints()
     runCallbacksFn = (Discord_RunCallbacksFn)GetProcAddress(hDiscordModule, "Discord_RunCallbacks");
 }
 
+void CALLBACK TimerProc(HWND Arg1, UINT Arg2, UINT_PTR Arg3, DWORD Arg4)
+{
+	assert(lastPresence);
+	assert(lastPresence->CurrentPlaybackState == Playing);
+
+	int currentPlaybackPositionInMSMode = 0;
+	int playbackPosition = SendMessage(plugin.hwndParent, WM_WA_IPC, currentPlaybackPositionInMSMode, IPC_GETOUTPUTTIME);
+	int playbackPositionInSeconds = playbackPosition / 1000;
+
+	std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
+	long long dtn = std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count();
+
+	lastPresence->SetStartTimestamp(dtn - playbackPositionInSeconds);
+
+	lastPresence->PostToDiscord();
+}
+
 int init() 
 {
     if (IsWindowUnicode(plugin.hwndParent))
@@ -226,6 +297,8 @@ int init()
 
     InitDiscord();
 
+	lastPresence.reset(new PresenceInfo());
+
     ReportIdleStatus();
 
     return 0;
@@ -239,14 +312,6 @@ void ShutdownDiscord()
     }
 }
 
-DiscordRichPresence GetRichPresenceDefault()
-{
-    DiscordRichPresence discordPresence;
-    memset(&discordPresence, 0, sizeof(discordPresence));
-    discordPresence.largeImageKey = "winamp-logo";
-    discordPresence.instance = 1;
-    return discordPresence;
-}
 
 void ReportIdleStatus()
 {
@@ -256,25 +321,27 @@ void ReportIdleStatus()
     if (pluginSettings.ApplicationID == "0")
         return;
 
-    DiscordRichPresence discordPresence = GetRichPresenceDefault();
-    discordPresence.state = "(Idle)";
-    discordPresence.largeImageKey = "winamp-logo";
-    updatePresenceFn(&discordPresence);
-    runCallbacksFn();
+	lastPresence->CurrentPlaybackState = Stopped;
+	lastPresence->SetStartTimestamp(0);
+	lastPresence->SetStateText("(Idle)");
+	lastPresence->ClearDetails();
+
+	lastPresence->PostToDiscord();
 }
 
-void ReportCurrentSongStatus()
+void ReportCurrentSongStatus(PlaybackState playbackState)
 {
     if (!hDiscordModule)
         return;
 
     if (pluginSettings.ApplicationID == "0")
         return;
-
-    DiscordRichPresence discordPresence = GetRichPresenceDefault();
-    discordPresence.state = "(Playing)";
-    discordPresence.largeImageKey = "winamp-logo";
-
+	
+	assert(playbackState != Stopped);
+	lastPresence->CurrentPlaybackState = playbackState;
+	lastPresence->SetStartTimestamp(0);
+	lastPresence->SetStateText(playbackState == Playing ? "(Playing)" : "(Paused)");
+	
     std::string detailsMessage;
     if (pluginSettings.DisplayTitleInSettings)
     {
@@ -286,26 +353,39 @@ void ReportCurrentSongStatus()
     {
         detailsMessage = "";
     }
-    discordPresence.details = detailsMessage.c_str();
+	lastPresence->SetDetails(detailsMessage.c_str());
+	lastPresence->PostToDiscord();
+}
 
-    updatePresenceFn(&discordPresence);
-    runCallbacksFn();
+void UpdateRichPresenceDetails()
+{
+	LONG isPlayingResult = SendMessage(plugin.hwndParent, WM_WA_IPC, 0, IPC_ISPLAYING);
+
+	if (isPlayingResult == Playing)
+	{
+		// Playing
+		SetTimer(plugin.hwndParent, 1, 1000, TimerProc);
+		ReportCurrentSongStatus(Playing);
+	}
+	else if (isPlayingResult == Paused)
+	{
+		// Paused
+		KillTimer(plugin.hwndParent, 1);
+		ReportCurrentSongStatus(Paused);
+	}
+	else if (isPlayingResult == Stopped)
+	{
+		// Stopped
+		KillTimer(plugin.hwndParent, 1);
+		ReportIdleStatus();
+	}
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (lParam == IPC_PLAYING_FILE) 
+	if (message == WM_WA_IPC && lParam == IPC_CB_MISC && wParam == IPC_CB_MISC_STATUS)
     {
-        LoadSettingsFile();
-
-        ReportCurrentSongStatus();
-    }    
-    else if (lParam == IPC_CB_MISC && wParam == IPC_CB_MISC_STATUS)
-    {
-        LONG isPlayingResult = SendMessage(plugin.hwndParent, WM_WA_IPC, 0, IPC_ISPLAYING);
-
-        if (isPlayingResult == 0)
-            ReportIdleStatus();
+		UpdateRichPresenceDetails();
     }
 
     return CallWindowProc(lpWndProcOld, hwnd, message, wParam, lParam);
@@ -326,19 +406,6 @@ void UpdateInMemorySettingsFromDialogState(HWND hWndDlg)
     if (GetWindowTextA(editboxHwnd, stringData, _countof(stringData)) > 0)
     {
         pluginSettings.ApplicationID = stringData;
-    }
-}
-
-void ForceUpdateRichPresenceDetails()
-{
-    LONG isPlayingResult = SendMessage(plugin.hwndParent, WM_WA_IPC, 0, IPC_ISPLAYING);
-    if (isPlayingResult)
-    {
-        ReportCurrentSongStatus();
-    }
-    else
-    {
-        ReportIdleStatus();
     }
 }
 
@@ -373,7 +440,7 @@ void OnConfirmSettingsDialog(HWND hWndDlg)
     }
 
     if (shouldUpdateRichPresenceDetails)
-        ForceUpdateRichPresenceDetails();
+        UpdateRichPresenceDetails();
 }
 
 void PopulateSettingsDialogFields(HWND hWndDlg)

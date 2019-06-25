@@ -5,7 +5,7 @@ setlocal
 
 :: Enable the copying behavior below
 :: set DEPLOY_PLUGIN_LOCALLY=1
-set DEPLOY_PLUGIN_LOCALLY=0
+set DEPLOY_PLUGIN_LOCALLY=1
 if NOT "%DEPLOY_PLUGIN_LOCALLY%"=="1" goto :end
 
 :: Set the environment variables below as needed.
