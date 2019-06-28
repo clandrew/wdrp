@@ -38,3 +38,4 @@ DiscordRichPresence/Release/*
 Debug/*
 Release/*
 *.vcxproj.user
+Distribute/
