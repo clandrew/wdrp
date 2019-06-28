@@ -5,6 +5,7 @@ Features:
 - Plugin has a settings menu for ease of use
 - Changing settings doesn't require re-starting Winamp or the plugin
 - Option to not display currently-playing title
+- Option to show elapsed time
 
 Tested on 
 - Winamp version 5.623 (x86)
