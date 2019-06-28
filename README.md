@@ -94,7 +94,9 @@ A: No, the plugin doesn't ask for your credentials.
 
 **Q: How come the status says "Playing a game" instead of "Listening to" like with Spotify?**
 
-A: The Discord RPC library doesn't currently expose a way of changing this UI element. The status for Spotify works because Discord gives Spotify special treatment. If it comes to be that the RPC library adds flexibility of changing this, I'd be interested in adopting it.
+A: The Discord RPC library doesn't (at the time of writing this) currently expose a way of changing this UI element. The status for Spotify worked because Discord gave Spotify special treatment. If it comes to be that the RPC library adds flexibility of changing this, I'd be interested in adopting it.
+
+Update (6/28/2019): it looks like Discord is distributing a new SDK called GameSDK, and ultimately the RPC SDK will become deprecated. From a quick glance at the [docs](https://discordapp.com/developers/docs/game-sdk/activities), it looks like the new SDK supports the ability to customize this. If so, great! I think it is kind of a hassle I need to move the plugin to a new SDK just to get this small feature, but I suppose they are phasing out the RPC SDK anyway. I can take a look at GameSDK and see how easy or hard it is to make it work and start there.
 
 **Q: Sometimes, I'm seeing a small delay before my Discord Rich Presence status is updated. What gives?**
 
