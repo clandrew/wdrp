@@ -102,7 +102,8 @@ A: Discord thresholds the update frequency of the status text on its side. The f
 
 **Q: Is there a way to get it to show album art?**
 
-A: Offhand, I don't currently know if it's possible.
+A: Currently, proabably not, but at some point it might be doable.
+One half of it would work fine- I can query Winamp for the art. The other missing half is to send it up to Discord. Discord doesn't, at the time of this writing, allow any "real" sort of programmatic upload of images- all images need to be uploaded through the Developer Portal web site. This is discussed a bit in their [FAQ](https://discordapp.com/developers/docs/rich-presence/faq) and [this Reddit thread](https://www.reddit.com/r/discordapp/comments/7fu2v5/i_made_spotify_rich_presence_i_think_its_nice/). If I could send images up with the RPC data, that would be perfect, but I'd be okay with anything really. I think it's likely they will remove this restriction at some point.
 
 **Q: I can't seem to get the plug-in to start.**
 
