@@ -2,15 +2,16 @@
 //
 
 #include "stdafx.h"
+#include "DiscordRichPresence.h"
 #include "Resource.h"
+#include "PresenceInfo.h"
+#include "SettingsFile.h"
+#include "Timer.h"
 
 // Forward declares
-typedef void (DISCORD_EXPORT *Discord_InitializeFn)(const char*, DiscordEventHandlers*, int, const char*);
-typedef void (DISCORD_EXPORT *Discord_ShutdownFn)(void);
-typedef void (DISCORD_EXPORT *Discord_UpdatePresenceFn)(const DiscordRichPresence*);
-typedef void (DISCORD_EXPORT *Discord_RunCallbacksFn)(void);
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 void ReportIdleStatus();
+void CALLBACK TimerProc(HWND, UINT, UINT_PTR, DWORD);
 
 // plugin version (don't touch this)
 #define GPPHDR_VER 0x10
@@ -19,19 +20,7 @@ void ReportIdleStatus();
 char PLUGIN_NAME[] = "Discord Rich Presence";
 
 // Variables
-HMODULE hDiscordModule{};
-Discord_InitializeFn initializeFn{};
-Discord_ShutdownFn shutdownFn{};
-Discord_UpdatePresenceFn updatePresenceFn{};
-Discord_RunCallbacksFn runCallbacksFn{};
-WNDPROC lpWndProcOld = 0;
-
-struct PluginSettings
-{
-    bool DisplayTitleInSettings;
-    std::string ApplicationID;
-} pluginSettings;
-
+WNDPROC g_lpWndProcOld = 0;
 // main structure with plugin information, version, name...
 typedef struct {
     int version;                   // version of the plugin structure
@@ -50,7 +39,7 @@ void quit(void);
 
 // this structure contains plugin information, version, name...
 // GPPHDR_VER is the version of the winampGeneralPurposePlugin (GPP) structure
-winampGeneralPurposePlugin plugin = {
+winampGeneralPurposePlugin g_plugin = {
     GPPHDR_VER,  // version of the plugin, defined in "gen_myplugin.h"
     PLUGIN_NAME, // name/title of the plugin, defined in "gen_myplugin.h"
     init,        // function name which will be executed on init event
@@ -60,225 +49,80 @@ winampGeneralPurposePlugin plugin = {
     0            // hinstance to this dll, loaded by winamp when this dll is loaded
 }; 
 
-static void handleDiscordReady(const DiscordUser* connectedUser)
+Timer g_timer;
+PresenceInfo g_presenceInfo;
+
+void CALLBACK TimerProc(HWND, UINT, UINT_PTR, DWORD)
 {
-}
+	assert(g_presenceInfo.CurrentPlaybackState == Playing);
+	assert(g_pluginSettings.ShowElapsedTime);
 
-static void handleDiscordError(int errcode, const char* message)
-{
-}
+	if (!g_presenceInfo.HasDiscordModuleLoaded())
+		return;
 
-static void handleDiscordDisconnected(int errcode, const char* message)
-{
-}
+	int currentPlaybackPositionInMSMode = 0;
+	int playbackPosition = SendMessage(g_plugin.hwndParent, WM_WA_IPC, currentPlaybackPositionInMSMode, IPC_GETOUTPUTTIME);
+	int playbackPositionInSeconds = playbackPosition / 1000;
 
-static void handleDiscordJoinGame(const char* secret)
-{
-}
+	std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
+	long long dtn = std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count();
 
-static void handleDiscordSpectateGame(const char* secret)
-{
-}
+	g_presenceInfo.SetStartTimestamp(dtn - playbackPositionInSeconds);
 
-static void handleDiscordJoinRequest(const DiscordUser* request)
-{
-}
-
-void InitDiscord()
-{
-    if (!hDiscordModule)
-        return;
-
-    if (pluginSettings.ApplicationID == "0")
-        return;
-
-    DiscordEventHandlers handlers;
-    memset(&handlers, 0, sizeof(handlers));
-    handlers.ready = handleDiscordReady;
-    handlers.errored = handleDiscordError;
-    handlers.disconnected = handleDiscordDisconnected;
-    handlers.joinGame = handleDiscordJoinGame;
-    handlers.spectateGame = handleDiscordSpectateGame;
-    handlers.joinRequest = handleDiscordJoinRequest;
-
-    std::string applicationID = pluginSettings.ApplicationID.c_str();
-    int autoRegister = 1;
-    const char* noSteamID = nullptr;
-    initializeFn(applicationID.c_str(), &handlers, autoRegister, noSteamID);
-    runCallbacksFn();
-}
-
-std::string GetExecutableFileName()
-{
-    char buffer[MAX_PATH];
-    (void)GetModuleFileNameA(NULL, buffer, MAX_PATH); // Result is ignored; empty string returned on failure
-
-    return std::string(buffer);
-}
-
-std::string GetExecutablePath()
-{
-    std::string executableFileName = GetExecutableFileName();
-    if (executableFileName.length() > 0)
-    {
-        return executableFileName.substr(0, executableFileName.find_last_of("\\/"));
-    }
-
-    return "";
-}
-
-std::string GetSettingsFilePath()
-{
-    std::string executablePath = GetExecutablePath();
-    if (executablePath.size() == 0)
-        return ""; // Couldn't load
-
-    std::string settingsFilePath = executablePath;
-    settingsFilePath.append("\\Plugins\\DiscordRichPresence\\settings.ini");
-    return settingsFilePath;
-}
-
-void SaveSettingsFile()
-{
-    std::string settingsFilePath = GetSettingsFilePath();
-    std::ofstream settingsFileWrite(settingsFilePath);
-    settingsFileWrite << "# Discord Rich Presence configuration" << "\n";
-    settingsFileWrite << "#####################################" << "\n";
-
-    if (pluginSettings.DisplayTitleInSettings)
-        settingsFileWrite << "DisplayTitleInStatus:true" << "\n";
-    else
-        settingsFileWrite << "DisplayTitleInStatus:false" << "\n";
-
-    settingsFileWrite << "ApplicationID:" << pluginSettings.ApplicationID << "\n";
-    settingsFileWrite.close();
-}
-
-void LoadSettingsFile()
-{
-    // Set some defaults
-    pluginSettings.DisplayTitleInSettings = false;
-    pluginSettings.ApplicationID = "0";
-
-    std::string settingsFilePath = GetSettingsFilePath();
-
-    // Attempt to load settings file.
-    std::ifstream settingsFileRead(settingsFilePath);
-    if (settingsFileRead.is_open())
-    {
-        while (settingsFileRead.good())
-        {
-            std::string line;
-            std::getline(settingsFileRead, line);
-            if (line.length() == 0)
-                continue;
-
-            if (line[0] == '#') // Comments
-                continue;
-
-            static const char* displayTileInStatus_label = "DisplayTitleInStatus:";
-            static const char* applicationID_label = "ApplicationID:";
-
-            if (line.find(displayTileInStatus_label) == 0)
-            {
-                std::string value = line.substr(strlen(displayTileInStatus_label));
-                if (value == "true")
-                    pluginSettings.DisplayTitleInSettings = true;
-                else if (value == "false")
-                    pluginSettings.DisplayTitleInSettings = false;
-            }
-            else if (line.find(applicationID_label) == 0)
-            {
-                std::string value = line.substr(strlen(applicationID_label));
-                pluginSettings.ApplicationID = value;
-            }
-        }
-    }
-    else
-    {
-        // No settings file was found. Create one.
-        SaveSettingsFile();
-    }
-}
-
-void LoadDiscordEntrypoints()
-{
-    if (!hDiscordModule)
-        return;
-
-    initializeFn = (Discord_InitializeFn)GetProcAddress(hDiscordModule, "Discord_Initialize");
-    shutdownFn = (Discord_ShutdownFn)GetProcAddress(hDiscordModule, "Discord_Shutdown");
-    updatePresenceFn = (Discord_UpdatePresenceFn)GetProcAddress(hDiscordModule, "Discord_UpdatePresence");
-    runCallbacksFn = (Discord_RunCallbacksFn)GetProcAddress(hDiscordModule, "Discord_RunCallbacks");
+	g_presenceInfo.PostToDiscord();
 }
 
 int init() 
 {
-    if (IsWindowUnicode(plugin.hwndParent))
-        lpWndProcOld = (WNDPROC)SetWindowLongW(plugin.hwndParent, GWL_WNDPROC, (LONG)WndProc);
+    if (IsWindowUnicode(g_plugin.hwndParent))
+        g_lpWndProcOld = (WNDPROC)SetWindowLongW(g_plugin.hwndParent, GWL_WNDPROC, (LONG)WndProc);
     else
-        lpWndProcOld = (WNDPROC)SetWindowLongA(plugin.hwndParent, GWL_WNDPROC, (LONG)WndProc);
+        g_lpWndProcOld = (WNDPROC)SetWindowLongA(g_plugin.hwndParent, GWL_WNDPROC, (LONG)WndProc);
+
+	g_timer.Initialize(g_plugin.hwndParent, TimerProc);
 
     LoadSettingsFile();
-
-    hDiscordModule = LoadLibrary(L"Plugins\\DiscordRichPresence\\discord-rpc.dll");
-    LoadDiscordEntrypoints();
-
-    InitDiscord();
+	
+	g_presenceInfo.InitializeDiscordRPC();
 
     ReportIdleStatus();
 
     return 0;
 }
 
-void ShutdownDiscord()
-{
-    if (hDiscordModule)
-    {
-        shutdownFn();
-    }
-}
-
-DiscordRichPresence GetRichPresenceDefault()
-{
-    DiscordRichPresence discordPresence;
-    memset(&discordPresence, 0, sizeof(discordPresence));
-    discordPresence.largeImageKey = "winamp-logo";
-    discordPresence.instance = 1;
-    return discordPresence;
-}
-
 void ReportIdleStatus()
 {
-    if (!hDiscordModule)
+    if (!g_presenceInfo.HasDiscordModuleLoaded())
         return;
 
-    if (pluginSettings.ApplicationID == "0")
+    if (g_pluginSettings.ApplicationID == "0")
         return;
 
-    DiscordRichPresence discordPresence = GetRichPresenceDefault();
-    discordPresence.state = "(Idle)";
-    discordPresence.largeImageKey = "winamp-logo";
-    updatePresenceFn(&discordPresence);
-    runCallbacksFn();
+	g_presenceInfo.CurrentPlaybackState = Stopped;
+	g_presenceInfo.SetStartTimestamp(0);
+	g_presenceInfo.SetStateText("(Idle)");
+	g_presenceInfo.ClearDetails();
+
+	g_presenceInfo.PostToDiscord();
 }
 
-void ReportCurrentSongStatus()
+void ReportCurrentSongStatus(PlaybackState playbackState)
 {
-    if (!hDiscordModule)
+    if (!g_presenceInfo.HasDiscordModuleLoaded())
         return;
 
-    if (pluginSettings.ApplicationID == "0")
+    if (g_pluginSettings.ApplicationID == "0")
         return;
-
-    DiscordRichPresence discordPresence = GetRichPresenceDefault();
-    discordPresence.state = "(Playing)";
-    discordPresence.largeImageKey = "winamp-logo";
-
+	
+	assert(playbackState != Stopped);
+	g_presenceInfo.CurrentPlaybackState = playbackState;
+	g_presenceInfo.SetStartTimestamp(0);
+	g_presenceInfo.SetStateText(playbackState == Playing ? "(Playing)" : "(Paused)");
+	
     std::string detailsMessage;
-    if (pluginSettings.DisplayTitleInSettings)
+    if (g_pluginSettings.DisplayTitleInStatus)
     {
-		std::wstring title = (wchar_t *)SendMessage(plugin.hwndParent, WM_WA_IPC, 0, IPC_GET_PLAYING_TITLE);
+		std::wstring title = (wchar_t *)SendMessage(g_plugin.hwndParent, WM_WA_IPC, 0, IPC_GET_PLAYING_TITLE);
 		std::wstring_convert<std::codecvt_utf8<wchar_t>> convertWideToUTF8;
 		detailsMessage = convertWideToUTF8.to_bytes(title);
     }
@@ -286,72 +130,80 @@ void ReportCurrentSongStatus()
     {
         detailsMessage = "";
     }
-    discordPresence.details = detailsMessage.c_str();
+	g_presenceInfo.SetDetails(detailsMessage.c_str());
+	g_presenceInfo.PostToDiscord();
+}
 
-    updatePresenceFn(&discordPresence);
-    runCallbacksFn();
+void UpdateRichPresenceDetails()
+{
+	LONG isPlayingResult = SendMessage(g_plugin.hwndParent, WM_WA_IPC, 0, IPC_ISPLAYING);
+
+	if (isPlayingResult == Playing)
+	{
+		// Playing
+		if (g_pluginSettings.ShowElapsedTime)
+		{
+			g_timer.Set();
+		}
+		else
+		{
+			g_timer.Stop();
+		}
+
+		ReportCurrentSongStatus(Playing);
+	}
+	else if (isPlayingResult == Paused)
+	{
+		// Paused
+		g_timer.Stop();
+		ReportCurrentSongStatus(Paused);
+	}
+	else if (isPlayingResult == Stopped)
+	{
+		// Stopped
+		g_timer.Stop();
+		ReportIdleStatus();
+	}
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (lParam == IPC_PLAYING_FILE) 
+	if (message == WM_WA_IPC && lParam == IPC_CB_MISC && wParam == IPC_CB_MISC_STATUS)
     {
-        LoadSettingsFile();
-
-        ReportCurrentSongStatus();
-    }    
-    else if (lParam == IPC_CB_MISC && wParam == IPC_CB_MISC_STATUS)
-    {
-        LONG isPlayingResult = SendMessage(plugin.hwndParent, WM_WA_IPC, 0, IPC_ISPLAYING);
-
-        if (isPlayingResult == 0)
-            ReportIdleStatus();
+		UpdateRichPresenceDetails();
     }
 
-    return CallWindowProc(lpWndProcOld, hwnd, message, wParam, lParam);
+    return CallWindowProc(g_lpWndProcOld, hwnd, message, wParam, lParam);
 }
 
 void UpdateInMemorySettingsFromDialogState(HWND hWndDlg)
 {
     // Update in-memory settings based on dialog state
     HWND checkboxHwnd = GetDlgItem(hWndDlg, IDC_CHECK_DISPLAY_TITLE_IN_STATUS);
-    int buttonState = Button_GetCheck(checkboxHwnd);
-    if (buttonState == BST_CHECKED)
-        pluginSettings.DisplayTitleInSettings = true;
-    else
-        pluginSettings.DisplayTitleInSettings = false;
+	g_pluginSettings.DisplayTitleInStatus = Button_GetCheck(checkboxHwnd) == BST_CHECKED;
+
+	checkboxHwnd = GetDlgItem(hWndDlg, IDC_SHOW_ELAPSED_TIME);
+	g_pluginSettings.ShowElapsedTime = Button_GetCheck(checkboxHwnd) == BST_CHECKED;
 
     HWND editboxHwnd = GetDlgItem(hWndDlg, IDC_EDIT_DISCORD_APPLICATION_ID);
     char stringData[255] = {};
     if (GetWindowTextA(editboxHwnd, stringData, _countof(stringData)) > 0)
     {
-        pluginSettings.ApplicationID = stringData;
-    }
-}
-
-void ForceUpdateRichPresenceDetails()
-{
-    LONG isPlayingResult = SendMessage(plugin.hwndParent, WM_WA_IPC, 0, IPC_ISPLAYING);
-    if (isPlayingResult)
-    {
-        ReportCurrentSongStatus();
-    }
-    else
-    {
-        ReportIdleStatus();
+        g_pluginSettings.ApplicationID = stringData;
     }
 }
 
 void OnConfirmSettingsDialog(HWND hWndDlg)
 {
-    PluginSettings previousSettings = pluginSettings;
+    PluginSettings previousSettings = g_pluginSettings;
 
     UpdateInMemorySettingsFromDialogState(hWndDlg);
 
-    bool applicationIDChanged = previousSettings.ApplicationID != pluginSettings.ApplicationID;
-    bool displayTitleSettingChanged = previousSettings.DisplayTitleInSettings != pluginSettings.DisplayTitleInSettings;
+    bool applicationIDChanged = previousSettings.ApplicationID != g_pluginSettings.ApplicationID;
+    bool displayTitleSettingChanged = previousSettings.DisplayTitleInStatus != g_pluginSettings.DisplayTitleInStatus;
+	bool elapsedTimeChanged = previousSettings.ShowElapsedTime != g_pluginSettings.ShowElapsedTime;
 
-    if (!applicationIDChanged && !displayTitleSettingChanged)
+    if (!applicationIDChanged && !displayTitleSettingChanged && !elapsedTimeChanged)
         return; // Nothing to do
 
     // Save settings to file
@@ -360,33 +212,50 @@ void OnConfirmSettingsDialog(HWND hWndDlg)
     bool shouldUpdateRichPresenceDetails = false;
 
     // The setting to display your currently-playing title has changed. Update Discord rich presence.
-    if (displayTitleSettingChanged)
-        shouldUpdateRichPresenceDetails = true;
+	if (displayTitleSettingChanged || elapsedTimeChanged)
+	{
+		shouldUpdateRichPresenceDetails = true;
+	}
 
     // The discord application ID has changed. Re-initialize everything against the new ID.
-    if (previousSettings.ApplicationID != pluginSettings.ApplicationID)
+    if (previousSettings.ApplicationID != g_pluginSettings.ApplicationID)
     {
-        ShutdownDiscord();
-        InitDiscord();
+		g_presenceInfo.ShutdownDiscordRPC();
+		g_presenceInfo.InitializeDiscordRPC();
 
         shouldUpdateRichPresenceDetails = true;
     }
 
-    if (shouldUpdateRichPresenceDetails)
-        ForceUpdateRichPresenceDetails();
+	if (shouldUpdateRichPresenceDetails)
+	{
+		UpdateRichPresenceDetails();
+	}
 }
 
 void PopulateSettingsDialogFields(HWND hWndDlg)
 {
     HWND checkboxHwnd = GetDlgItem(hWndDlg, IDC_CHECK_DISPLAY_TITLE_IN_STATUS);
+	if (g_pluginSettings.DisplayTitleInStatus)
+	{
+		Button_SetCheck(checkboxHwnd, BST_CHECKED);
+	}
+	else
+	{
+		Button_SetCheck(checkboxHwnd, BST_UNCHECKED);
+	}
 
-    if (pluginSettings.DisplayTitleInSettings)
-        Button_SetCheck(checkboxHwnd, BST_CHECKED);
-    else
-        Button_SetCheck(checkboxHwnd, BST_UNCHECKED);
+	checkboxHwnd = GetDlgItem(hWndDlg, IDC_SHOW_ELAPSED_TIME);
+	if (g_pluginSettings.ShowElapsedTime)
+	{
+		Button_SetCheck(checkboxHwnd, BST_CHECKED);
+	}
+	else
+	{
+		Button_SetCheck(checkboxHwnd, BST_UNCHECKED);
+	}
 
     HWND editboxHwnd = GetDlgItem(hWndDlg, IDC_EDIT_DISCORD_APPLICATION_ID);
-    SetWindowTextA(editboxHwnd, pluginSettings.ApplicationID.c_str());
+    SetWindowTextA(editboxHwnd, g_pluginSettings.ApplicationID.c_str());
 }
 
 // Dialogue box callback function
@@ -423,6 +292,27 @@ BOOL CALLBACK ConfigDialogProc(HWND hWndDlg, UINT wMessage, WPARAM wParam, LPARA
                 break;
             }
         }
+	case BN_CLICKED:
+		{
+			auto buttonIdentifier = LOWORD(wParam);
+			if (buttonIdentifier == IDC_CHECK_DISPLAY_TITLE_IN_STATUS)
+			{
+				HWND displayAllTheThingsCheckbox = GetDlgItem(hWndDlg, IDC_CHECK_DISPLAY_TITLE_IN_STATUS);
+				int buttonState = Button_GetCheck(displayAllTheThingsCheckbox);
+				bool enableElapsedTime = buttonState == BST_CHECKED;
+
+				HWND elapsedTimeCheckbox = GetDlgItem(hWndDlg, IDC_SHOW_ELAPSED_TIME);
+				if (enableElapsedTime)
+				{
+					EnableWindow(elapsedTimeCheckbox, TRUE);
+				}
+				else
+				{
+					Button_SetCheck(elapsedTimeCheckbox, BST_UNCHECKED);
+					EnableWindow(elapsedTimeCheckbox, FALSE);
+				}
+			}
+		}
     }
 
     return FALSE;    // message not processed
@@ -430,17 +320,17 @@ BOOL CALLBACK ConfigDialogProc(HWND hWndDlg, UINT wMessage, WPARAM wParam, LPARA
 
 void config() 
 {
-    DialogBox(plugin.hDllInstance, (LPTSTR)IDD_DIALOG_CONFIG, plugin.hwndParent, &ConfigDialogProc);
+    DialogBox(g_plugin.hDllInstance, (LPTSTR)IDD_DIALOG_CONFIG, g_plugin.hwndParent, &ConfigDialogProc);
 }
 
 void quit() 
 {
-    ShutdownDiscord();
+	g_presenceInfo.ShutdownDiscordRPC();
 }
 
 // This is an export function called by winamp which returns this plugin info.
 // We wrap the code in 'extern "C"' to ensure the export isn't mangled if used in a CPP file.
 extern "C" __declspec(dllexport) winampGeneralPurposePlugin * winampGetGeneralPurposePlugin() 
 {
-    return &plugin;
+    return &g_plugin;
 }
