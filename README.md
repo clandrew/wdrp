@@ -60,7 +60,13 @@ Most often, the Plugins folder is located at **C:\Program Files (x86)\Winamp\Plu
 
 When you're done, there should be a file **gen_DiscordRichPresence.dll** in the Plugins folder, plus a folder inside that called DiscordRichPresence.
 
-4. Now open Winamp (or restart it if it was already open), and go to **Preferences**.
+4. Make sure you have the "Microsoft C++ Redistributable for Visual Studio 2015". It's more likely than not you already have this, because a lot of program installers include it. But in case you don't, you can find it here:
+
+[https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads)
+
+(The runtime is the same for VS 2015, 2017 and 2019.)
+
+5. Now open Winamp (or restart it if it was already open), and go to **Preferences**.
 
 ![Winamp is shown running, where the user has clicked the menu button, moused-over the Options menu, and is about to click Preferences. Preferences can also be accessed with Ctrl+P.](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup05.png "Winamp is shown running, where the user has clicked the menu button, moused-over the Options menu, and is about to click Preferences. Preferences can also be accessed with Ctrl+P.")
 
