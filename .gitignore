@@ -14,7 +14,6 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
 
 # Fortran module files
 *.mod
@@ -24,7 +23,6 @@
 *.lai
 *.la
 *.a
-*.lib
 
 # Executables
 *.exe
@@ -41,3 +39,8 @@ Release/*
 Distribute/
 
 *.zip
+DiscordRichPresence_GameSDK/.vs/DiscordRichPresence_GameSDK/v16/*
+DiscordRichPresence_GameSDK/Debug/*
+*.tlog
+DiscordRichPresence_GameSDK/.vs/*
+DiscordRuntime/*
