@@ -6,9 +6,11 @@ class PresenceInfo
 {
 	DiscordRichPresence m_presence;
 	std::string m_stateBuffer;
-	std::string m_detailsBuffer;
-	bool m_detailsBufferIsUrl;
-	std::string m_detailsBuffer2;
+
+	std::string m_lowLevelTrackTitleBuffer;
+	bool m_lowLevelTrackTitleIsUrl;
+
+	std::string m_streamingTrackTitleBuffer;
 
 	HMODULE m_hDiscordModule;
 
@@ -32,10 +34,11 @@ public:
 	bool HasDiscordModuleLoaded() const;
 
 	void SetStateText(char const* str);
-	void SetDetails(char const* str);
 
-	bool NeedsAdditionalDetails() const;
-	void SetAdditionalDetails(char const* str);
+	void SetLowLevelTrackTitle(char const* str);
+
+	bool IsStreaming() const;
+	void SetStreamingTrackTitle(char const* str);
 
 	void ClearDetails();
 	void SetStartTimestamp(__int64 timestamp);
