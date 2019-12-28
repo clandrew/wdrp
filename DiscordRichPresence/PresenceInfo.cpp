@@ -14,6 +14,7 @@ PresenceInfo::PresenceInfo()
 	m_presence.largeImageKey = "winamp-logo";
 	m_presence.instance = 1;
 	CurrentPlaybackState = Stopped;
+	m_lowLevelTrackTitleIsUrl = false;
 }
 
 void PresenceInfo::SetStateText(char const* str)
@@ -22,15 +23,30 @@ void PresenceInfo::SetStateText(char const* str)
 	m_presence.state = m_stateBuffer.c_str();
 }
 
-void PresenceInfo::SetDetails(char const* str)
+void PresenceInfo::SetLowLevelTrackTitle(char const* str)
 {
-	m_detailsBuffer = str;
-	m_presence.details = m_detailsBuffer.c_str();
+	m_lowLevelTrackTitleBuffer = str;
+	m_lowLevelTrackTitleIsUrl = _strnicmp(str, "http://", 7) == 0 || _strnicmp(str, "https://", 8) == 0;
+	m_streamingTrackTitleBuffer.clear();
+}
+
+bool PresenceInfo::IsStreaming() const
+{
+	return m_lowLevelTrackTitleIsUrl;
+}
+
+void PresenceInfo::SetStreamingTrackTitle(char const* str)
+{
+	m_streamingTrackTitleBuffer = str;
 }
 
 void PresenceInfo::ClearDetails()
 {
-	m_detailsBuffer.clear();
+	m_lowLevelTrackTitleBuffer.clear();
+	m_lowLevelTrackTitleIsUrl = false;
+
+	m_streamingTrackTitleBuffer.clear();
+
 	m_presence.details = nullptr;
 }
 
@@ -41,6 +57,15 @@ void PresenceInfo::SetStartTimestamp(__int64 timestamp)
 
 void PresenceInfo::PostToDiscord()
 {
+	if (m_streamingTrackTitleBuffer.length() > 0) // Streaming title takes precedence
+	{
+		m_presence.details = m_streamingTrackTitleBuffer.c_str();
+	}
+	else
+	{
+		m_presence.details = m_lowLevelTrackTitleBuffer.c_str();
+	}
+
 	m_updatePresenceFn(&m_presence);
 	m_runCallbacksFn();
 }

@@ -55,19 +55,29 @@ PresenceInfo g_presenceInfo;
 void CALLBACK TimerProc(HWND, UINT, UINT_PTR, DWORD)
 {
 	assert(g_presenceInfo.CurrentPlaybackState == Playing);
-	assert(g_pluginSettings.ShowElapsedTime);
+	assert(g_pluginSettings.ShowElapsedTime || g_presenceInfo.IsStreaming());
 
 	if (!g_presenceInfo.HasDiscordModuleLoaded())
 		return;
 
-	int currentPlaybackPositionInMSMode = 0;
-	int playbackPosition = SendMessage(g_plugin.hwndParent, WM_WA_IPC, currentPlaybackPositionInMSMode, IPC_GETOUTPUTTIME);
-	int playbackPositionInSeconds = playbackPosition / 1000;
+	if (g_presenceInfo.IsStreaming()) // Streaming requires more frequent title updates
+	{
+		int curPos = SendMessage(g_plugin.hwndParent, WM_WA_IPC, 0, IPC_GETLISTPOS);
+		char* playlistTitle = (char*)SendMessage(g_plugin.hwndParent, WM_WA_IPC, curPos, IPC_GETPLAYLISTTITLE);
+		g_presenceInfo.SetStreamingTrackTitle(playlistTitle);
+	}
 
-	std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
-	long long dtn = std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count();
+	if (g_pluginSettings.ShowElapsedTime)
+	{
+		int currentPlaybackPositionInMSMode = 0;
+		int playbackPosition = SendMessage(g_plugin.hwndParent, WM_WA_IPC, currentPlaybackPositionInMSMode, IPC_GETOUTPUTTIME);
+		int playbackPositionInSeconds = playbackPosition / 1000;
 
-	g_presenceInfo.SetStartTimestamp(dtn - playbackPositionInSeconds);
+		std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
+		long long dtn = std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count();
+
+		g_presenceInfo.SetStartTimestamp(dtn - playbackPositionInSeconds);
+	}
 
 	g_presenceInfo.PostToDiscord();
 }
@@ -130,7 +140,7 @@ void ReportCurrentSongStatus(PlaybackState playbackState)
     {
         detailsMessage = "";
     }
-	g_presenceInfo.SetDetails(detailsMessage.c_str());
+	g_presenceInfo.SetLowLevelTrackTitle(detailsMessage.c_str());
 	g_presenceInfo.PostToDiscord();
 }
 
@@ -140,8 +150,8 @@ void UpdateRichPresenceDetails()
 
 	if (isPlayingResult == Playing)
 	{
-		// Playing
-		if (g_pluginSettings.ShowElapsedTime)
+		ReportCurrentSongStatus(Playing);
+		if (g_pluginSettings.ShowElapsedTime || g_presenceInfo.IsStreaming())
 		{
 			g_timer.Set();
 		}
@@ -149,18 +159,14 @@ void UpdateRichPresenceDetails()
 		{
 			g_timer.Stop();
 		}
-
-		ReportCurrentSongStatus(Playing);
 	}
 	else if (isPlayingResult == Paused)
 	{
-		// Paused
 		g_timer.Stop();
 		ReportCurrentSongStatus(Paused);
 	}
 	else if (isPlayingResult == Stopped)
 	{
-		// Stopped
 		g_timer.Stop();
 		ReportIdleStatus();
 	}
@@ -170,6 +176,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (message == WM_WA_IPC && lParam == IPC_CB_MISC && wParam == IPC_CB_MISC_STATUS)
     {
+		// Notification sent from Winamp on any change in playback.
 		UpdateRichPresenceDetails();
     }
 
