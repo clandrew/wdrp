@@ -60,6 +60,13 @@ void CALLBACK TimerProc(HWND, UINT, UINT_PTR, DWORD)
 	if (!g_presenceInfo.HasDiscordModuleLoaded())
 		return;
 
+	if (g_presenceInfo.NeedsAdditionalDetails())
+	{
+		int curPos = SendMessage(g_plugin.hwndParent, WM_WA_IPC, 0, IPC_GETLISTPOS);
+		char* playlistTitle = (char*)SendMessage(g_plugin.hwndParent, WM_WA_IPC, curPos, IPC_GETPLAYLISTTITLE);
+		g_presenceInfo.SetAdditionalDetails(playlistTitle);
+	}
+
 	int currentPlaybackPositionInMSMode = 0;
 	int playbackPosition = SendMessage(g_plugin.hwndParent, WM_WA_IPC, currentPlaybackPositionInMSMode, IPC_GETOUTPUTTIME);
 	int playbackPositionInSeconds = playbackPosition / 1000;
@@ -132,6 +139,11 @@ void ReportCurrentSongStatus(PlaybackState playbackState)
     }
 	g_presenceInfo.SetDetails(detailsMessage.c_str());
 	g_presenceInfo.PostToDiscord();
+
+	if (g_presenceInfo.NeedsAdditionalDetails())
+	{
+		g_timer.Set();
+	}
 }
 
 void UpdateRichPresenceDetails()

@@ -14,6 +14,7 @@ PresenceInfo::PresenceInfo()
 	m_presence.largeImageKey = "winamp-logo";
 	m_presence.instance = 1;
 	CurrentPlaybackState = Stopped;
+	m_detailsBufferIsUrl = false;
 }
 
 void PresenceInfo::SetStateText(char const* str)
@@ -25,13 +26,26 @@ void PresenceInfo::SetStateText(char const* str)
 void PresenceInfo::SetDetails(char const* str)
 {
 	m_detailsBuffer = str;
-	m_presence.details = m_detailsBuffer.c_str();
+	m_detailsBufferIsUrl = _strnicmp(str, "http://", 7) == 0 || _strnicmp(str, "https://", 8) == 0;
+}
+
+bool PresenceInfo::NeedsAdditionalDetails() const
+{
+	return m_detailsBufferIsUrl;
+}
+
+void PresenceInfo::SetAdditionalDetails(char const* str)
+{
+	m_detailsBuffer2 = str;
+	m_presence.details = m_detailsBuffer2.c_str();
 }
 
 void PresenceInfo::ClearDetails()
 {
 	m_detailsBuffer.clear();
+	m_detailsBuffer2.clear();
 	m_presence.details = nullptr;
+	m_detailsBufferIsUrl = false;
 }
 
 void PresenceInfo::SetStartTimestamp(__int64 timestamp)
@@ -41,6 +55,12 @@ void PresenceInfo::SetStartTimestamp(__int64 timestamp)
 
 void PresenceInfo::PostToDiscord()
 {
+	m_presence.details = m_detailsBuffer.c_str();
+	if (m_detailsBuffer2.length() > 0)
+	{
+		m_presence.details = m_detailsBuffer2.c_str();
+	}
+
 	m_updatePresenceFn(&m_presence);
 	m_runCallbacksFn();
 }
