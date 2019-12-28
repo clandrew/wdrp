@@ -153,13 +153,20 @@ void UpdateRichPresenceDetails()
 	if (isPlayingResult == Playing)
 	{
 		// Playing
-		if (g_pluginSettings.ShowElapsedTime)
+		if (g_presenceInfo.NeedsAdditionalDetails())
 		{
 			g_timer.Set();
 		}
 		else
 		{
-			g_timer.Stop();
+			if (g_pluginSettings.ShowElapsedTime)
+			{
+				g_timer.Set();
+			}
+			else
+			{
+				g_timer.Stop();
+			}
 		}
 
 		ReportCurrentSongStatus(Playing);
@@ -182,6 +189,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (message == WM_WA_IPC && lParam == IPC_CB_MISC && wParam == IPC_CB_MISC_STATUS)
     {
+		// Notification sent from Winamp on any change in playback.
 		UpdateRichPresenceDetails();
     }
 
