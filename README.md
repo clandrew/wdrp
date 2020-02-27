@@ -132,6 +132,8 @@ A: I've seen this problem too. It appears to be a bug in Discord. The way I've f
 
 A: The plugin is built using Visual Studio 2017 on a Windows 10 environment. It uses the v141 toolset and SDK version 10.0.17134.0. Other environments might work too.
 
+VS Code is supported as well. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup assistance including required libraries and paths.
+
 **Q: I have a question or other comment.**
 
 A: Please contact cmlandrews at gmail dot com. Thank you for your feedback!

@@ -25,6 +25,11 @@
 *.la
 *.a
 *.lib
+*.exp
+
+# Winamp/Discord
+discord-rpc/
+winamp-sdk/
 
 # Executables
 *.exe
@@ -40,4 +45,10 @@ Release/*
 *.vcxproj.user
 Distribute/
 
+*.exp
 *.zip
+
+#cl.exe leftovers
+DiscordRichPresence/RCa22352
+DiscordRichPresence/Config.res
+

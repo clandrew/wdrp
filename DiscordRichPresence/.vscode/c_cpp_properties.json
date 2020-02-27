@@ -1,0 +1,36 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}",
+                "${workspaceFolder}/../discord-rpc/win32-dynamic/include/",
+                "C:/Program Files (x86)/Winamp SDK/Winamp/",
+                "C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.16.27023/include/"
+            ],
+            "defines": [
+                "UNICODE",
+                "WIN32",
+                "DEBUG",
+                "DISCORDRICHPRESENCE_EXPORTS",
+                "_WINDOWS",
+                "_USRDLL",
+                "_WINDLL"
+            ],
+            "intelliSenseMode": "msvc-x86",
+            "cppStandard": "c++14",
+            "cStandard": "c11",
+            "windowsSdkVersion": "10.0.17134.0",
+            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/cl.exe",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": []
+            },
+            "forcedInclude": [
+                "${workspaceFolder}/../discord-rpc/win32-dynamic/lib/discord-rpc.lib"
+            ],
+            "compilerArgs": []
+        }
+    ],
+    "version": 4
+}
