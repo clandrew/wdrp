@@ -93,38 +93,45 @@ int init()
 
     LoadSettingsFile();
 	
-	g_presenceInfo.InitializeDiscordRPC();
+	if (g_pluginSettings.SendWhenPausedOrStopped)
+	{
+		g_presenceInfo.InitializeDiscordRPC();
 
-    ReportIdleStatus();
+    	ReportIdleStatus();
+	}
 
     return 0;
 }
 
 void ReportIdleStatus()
-{
-    if (!g_presenceInfo.HasDiscordModuleLoaded())
+{    
+	if (g_pluginSettings.ApplicationID == "0")
         return;
 
-    if (g_pluginSettings.ApplicationID == "0")
-        return;
+	if (!g_presenceInfo.IsDiscordRPCConnected())
+	{
+        g_presenceInfo.InitializeDiscordRPC();
+	}
 
 	g_presenceInfo.CurrentPlaybackState = Stopped;
 	g_presenceInfo.SetStartTimestamp(0);
 	g_presenceInfo.SetStateText("(Idle)");
 	g_presenceInfo.ClearDetails();
-
-	g_presenceInfo.PostToDiscord();
+	g_presenceInfo.PostToDiscord();	
 }
 
 void ReportCurrentSongStatus(PlaybackState playbackState)
 {
-    if (!g_presenceInfo.HasDiscordModuleLoaded())
-        return;
+	assert(playbackState != Stopped);
 
     if (g_pluginSettings.ApplicationID == "0")
         return;
+
+	if (!g_presenceInfo.IsDiscordRPCConnected())
+	{
+        g_presenceInfo.InitializeDiscordRPC();
+	}
 	
-	assert(playbackState != Stopped);
 	g_presenceInfo.CurrentPlaybackState = playbackState;
 	g_presenceInfo.SetStartTimestamp(0);
 	g_presenceInfo.SetStateText(playbackState == Playing ? "(Playing)" : "(Paused)");
@@ -163,12 +170,26 @@ void UpdateRichPresenceDetails()
 	else if (isPlayingResult == Paused)
 	{
 		g_timer.Stop();
-		ReportCurrentSongStatus(Paused);
+		if (g_pluginSettings.SendWhenPausedOrStopped)
+		{
+			ReportCurrentSongStatus(Paused);
+		}
+		else 
+		{
+			g_presenceInfo.ShutdownDiscordRPC();
+		}
 	}
 	else if (isPlayingResult == Stopped)
 	{
 		g_timer.Stop();
-		ReportIdleStatus();
+		if (g_pluginSettings.SendWhenPausedOrStopped)
+		{
+			ReportIdleStatus();
+		}
+		else 
+		{
+			g_presenceInfo.ShutdownDiscordRPC();
+		}
 	}
 }
 
@@ -198,6 +219,9 @@ void UpdateInMemorySettingsFromDialogState(HWND hWndDlg)
     {
         g_pluginSettings.ApplicationID = stringData;
     }
+
+	checkboxHwnd = GetDlgItem(hWndDlg, IDC_SEND_WHEN_PAUSE_OR_STOPPED);
+	g_pluginSettings.SendWhenPausedOrStopped = Button_GetCheck(checkboxHwnd) == BST_CHECKED;
 }
 
 void OnConfirmSettingsDialog(HWND hWndDlg)
@@ -209,8 +233,9 @@ void OnConfirmSettingsDialog(HWND hWndDlg)
     bool applicationIDChanged = previousSettings.ApplicationID != g_pluginSettings.ApplicationID;
     bool displayTitleSettingChanged = previousSettings.DisplayTitleInStatus != g_pluginSettings.DisplayTitleInStatus;
 	bool elapsedTimeChanged = previousSettings.ShowElapsedTime != g_pluginSettings.ShowElapsedTime;
+	bool sendOnPausedOrStopChanged = previousSettings.SendWhenPausedOrStopped != g_pluginSettings.SendWhenPausedOrStopped;
 
-    if (!applicationIDChanged && !displayTitleSettingChanged && !elapsedTimeChanged)
+    if (!applicationIDChanged && !displayTitleSettingChanged && !elapsedTimeChanged && !sendOnPausedOrStopChanged)
         return; // Nothing to do
 
     // Save settings to file
@@ -232,6 +257,11 @@ void OnConfirmSettingsDialog(HWND hWndDlg)
 
         shouldUpdateRichPresenceDetails = true;
     }
+
+	if (previousSettings.SendWhenPausedOrStopped != g_pluginSettings.SendWhenPausedOrStopped)
+	{
+		shouldUpdateRichPresenceDetails = true;
+	}
 
 	if (shouldUpdateRichPresenceDetails)
 	{
@@ -263,6 +293,9 @@ void PopulateSettingsDialogFields(HWND hWndDlg)
 
     HWND editboxHwnd = GetDlgItem(hWndDlg, IDC_EDIT_DISCORD_APPLICATION_ID);
     SetWindowTextA(editboxHwnd, g_pluginSettings.ApplicationID.c_str());
+
+	checkboxHwnd = GetDlgItem(hWndDlg, IDC_SEND_WHEN_PAUSE_OR_STOPPED);
+	Button_SetCheck(checkboxHwnd, (g_pluginSettings.SendWhenPausedOrStopped ? BST_CHECKED : BST_UNCHECKED));
 }
 
 // Dialogue box callback function
