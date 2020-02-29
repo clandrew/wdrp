@@ -1,0 +1,43 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build gen_DiscordRichPresence.dll (RELEASE|Win32)",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "windows": {
+                "command": ".\\build.bat"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build gen_DiscordRichPresence.dll, CopyToInstall.cmd (DEBUG|Win32)",
+            "type": "shell",
+            "group": "build",
+            "windows": {
+                "command": ".\\build.bat Debug && ..\\CopyToInstall.cmd",
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build gen_DiscordRichPresence.dll, CopyToInstall.cmd (RELEASE|Win32)",
+            "type": "shell",
+            "group": "build",
+            "windows": {
+                "command": ".\\build.bat Release && ..\\CopyToInstall.cmd",
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        }
+    ]
+}
