@@ -104,8 +104,8 @@ int init()
 }
 
 void ReportIdleStatus()
-{    
-	if (g_pluginSettings.ApplicationID == "0")
+{
+    if (g_pluginSettings.ApplicationID == "0")
         return;
 
 	if (!g_presenceInfo.IsDiscordRPCConnected())
