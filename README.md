@@ -113,7 +113,7 @@ A: Discord thresholds the update frequency of the status text on its side. The f
 A: Currently, proabably not, but at some point it might be doable.
 One half of it would work fine- I can query Winamp for the art. The other missing half is to send it up to Discord. Discord doesn't, at the time of this writing, allow any "real" sort of programmatic upload of images- all images need to be uploaded through the Developer Portal web site. This is discussed a bit in their [FAQ](https://discordapp.com/developers/docs/rich-presence/faq) and [this Reddit thread](https://www.reddit.com/r/discordapp/comments/7fu2v5/i_made_spotify_rich_presence_i_think_its_nice/). If I could send images up with the RPC data, that would be perfect, but I'd be okay with anything really. I think it's likely they will remove this restriction at some point.
 
-**Q: Will other people be able to hear the music I'm listening to?*
+**Q: Will other people be able to hear the music I'm listening to?**
 
 A: No, Discord Rich Presence doesn't allow you to transmit music. You can look at other rich presences and see they don't play music either. For example, Spotify- if any Discord Rich Presence were to have it, it'd be that one (they have a special relationship with Discord and get access to special functionalities ordinary plug-ins don't have), and they don't have it. Their rich presence has a link on it you can click that opens Spotify in your browser, presumably at the same stream. The rich presence itself doesn't play music or video. Discord Rich Presence API doesn't even allow plug-ins to transmit images, much less audio and video. 
 
