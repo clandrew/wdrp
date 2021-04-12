@@ -13,6 +13,8 @@ class PresenceInfo
 	std::string m_streamingTrackTitleBuffer;
 
 	HMODULE m_hDiscordModule;
+	//used to interop with Discord callbacks for connected status
+	static bool m_discordConnected;
 
 	typedef void (DISCORD_EXPORT *Discord_InitializeFn)(const char*, DiscordEventHandlers*, int, const char*);
 	typedef void (DISCORD_EXPORT *Discord_ShutdownFn)(void);
@@ -28,6 +30,9 @@ public:
 	PresenceInfo();
 	PlaybackState CurrentPlaybackState;
 
+	//used to interop with Discord callbacks for connected status
+	static void SetDiscordRPCConnectStatus(bool);
+	bool IsDiscordRPCConnected();
 	void InitializeDiscordRPC();
 	void ShutdownDiscordRPC();
 

@@ -59,8 +59,10 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,119,72,50,14
     CONTROL         "Display currently-playing title in Discord status",IDC_CHECK_DISPLAY_TITLE_IN_STATUS,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,7,163,10
-    LTEXT           "Discord Application ID:",IDC_STATIC,7,47,73,8
-    EDITTEXT        IDC_EDIT_DISCORD_APPLICATION_ID,83,45,101,14,ES_AUTOHSCROLL
+    CONTROL         "Send status when paused or stopped",IDC_SEND_WHEN_PAUSE_OR_STOPPED,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,37,163,10
+    LTEXT           "Discord Application ID:",IDC_STATIC,7,57,73,8
+    EDITTEXT        IDC_EDIT_DISCORD_APPLICATION_ID,83,55,101,14,ES_AUTOHSCROLL
     CONTROL         "Show elapsed time",IDC_SHOW_ELAPSED_TIME,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,31,23,115,10
 END
 
