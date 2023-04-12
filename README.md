@@ -1,13 +1,16 @@
 # Discord Rich Presence Winamp plugin
+
 Do you use Winamp to play media, and Discord for social purposes? If you have ever wanted to integrate Winamp into Discord, this simple, easy-to-use plugin will allow you to do it.
 
 Features:
+
 - Plugin has a settings menu for ease of use
 - Changing settings doesn't require re-starting Winamp or the plugin
 - Option to not display currently-playing title
 - Option to show elapsed time
 
-Tested on 
+Tested on
+
 - Winamp version 5.623 (x86)
 - Winamp version 5.8 Build 3660 (x86)
 
@@ -18,6 +21,7 @@ Example:
 ![Winamp is shown running, playing a song, side-by-side with a Discord Rich Presence status indicator showing that song's name and artist](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Example.png "Winamp is shown running, playing a song, side-by-side with a Discord Rich Presence status indicator showing that song's name and artist")
 
 # Frequently Asked Questions (F.A.Q.'s)
+
 **Q: Winamp, really? In {current year}?**
 
 A: Yeah. Some people like it :P
@@ -42,7 +46,7 @@ Click "**Create an application**". You can give it a name like "Winamp".
 
 ![An image of a dialog box titled Create an application. The user is typing in the text, Winamp. There are buttons labeled Create and Cancel](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup01.png "An image of a dialog box titled Create an application. The user is typing in the text, Winamp. There are buttons labeled Create and Cancel")
 
-Afterward, you'll be taken to a screen to configure the application. You can set an icon, if you want. I got one from [here](https://commons.wikimedia.org/wiki/File:Winamp-logo.png). 
+Afterward, you'll be taken to a screen to configure the application. You can set an icon, if you want. I got one from [here](https://commons.wikimedia.org/wiki/File:Winamp-logo.png).
 
 If you want to include a logo in the Rich Presence, upload an asset for the application to "Rich Presence --> Art Assets" and name it "winamp-logo". It will show up to the left of the rich presence text. For an example of where the logo will show up and what that looks like, see "largeImageKey" described on [this page](https://discordapp.com/developers/docs/rich-presence/how-to).
 
@@ -50,23 +54,11 @@ If you want to include a logo in the Rich Presence, upload an asset for the appl
 
 The only thing to do here is to take note of the **Client ID**, also called an **Application ID**, since you'll need it later.
 
-2. Download "Distribute.zip" from the latest plug-in release from GitHub [here](https://github.com/clandrew/wdrp/releases/).
+2. Close Winamp.
 
-3. To install the Winamp plugin, unzip Distribute.zip and copy the results to the Plugins folder of your Winamp installation as shown.
+3. Run the installer from the release tab. This will automatically place the plugin DLL in the Winamp folder for you + if Microsoft C++ Redistributable for Visual Studio 2015 is not installed, it will ask if you would like to install it. (Microsoft C++ Redistributable for Visual Studio 2015 is required for this plugin to work.)
 
-Most often, the Plugins folder is located at **C:\Program Files (x86)\Winamp\Plugins**.
-
-![Two Windows file folders are shown; one for the Winamp Plugins install folder and one for the unzipped plugin release. Arrows are showing that the plugin release files are copied into the Winamp Plugins folder.](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup04.PNG "Two Windows file folders are shown; one for the Winamp Plugins install folder and one for the unzipped plugin release. Arrows are showing that the plugin release files are copied into the Winamp Plugins folder.")
-
-When you're done, there should be a file **gen_DiscordRichPresence.dll** in the Plugins folder, plus a folder inside that called DiscordRichPresence.
-
-4. Make sure you have the "Microsoft C++ Redistributable for Visual Studio 2015". It's more likely than not you already have this, because a lot of program installers include it. But in case you don't, you can find it here:
-
-[https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads)
-
-(The runtime is the same for VS 2015, 2017 and 2019.)
-
-5. Now open Winamp (or restart it if it was already open), and go to **Preferences**.
+4. Now open Winamp (or restart it if it was already open), and go to **Preferences**.
 
 ![Winamp is shown running, where the user has clicked the menu button, moused-over the Options menu, and is about to click Preferences. Preferences can also be accessed with Ctrl+P.](https://raw.githubusercontent.com/clandrew/wdrp/master/Images/Setup05.png "Winamp is shown running, where the user has clicked the menu button, moused-over the Options menu, and is about to click Preferences. Preferences can also be accessed with Ctrl+P.")
 
@@ -81,9 +73,11 @@ Click the button **Configure selected plug-in.**
 On this menu, paste the Discord **Application ID** from before. Also, you can check or un-check the box depending on whether you are comfortable showing the currently-playing media on Discord.
 
 Alternatively, you can close Winamp and edit the settings.ini file, e.g., in
+
 ```
 C:\Program Files (x86)\Winamp\Plugins\DiscordRichPresence\settings.ini
 ```
+
 and verify it contains
 ApplicationID:xxx (your Application/Client ID and not all zeores)
 You may have to do this if Winamp plugins don't have privilege to change files in their folder.
@@ -115,17 +109,19 @@ One half of it would work fine- I can query Winamp for the art. The other missin
 
 **Q: Will other people be able to hear the music I'm listening to?**
 
-A: No, Discord Rich Presence doesn't allow you to transmit music. You can look at other rich presences and see they don't play music either. For example, Spotify- if any Discord Rich Presence were to have it, it'd be that one (they have a special relationship with Discord and get access to special functionalities ordinary plug-ins don't have), and they don't have it. Their rich presence has a link on it you can click that opens Spotify in your browser, presumably at the same stream. The rich presence itself doesn't play music or video. Discord Rich Presence API doesn't even allow plug-ins to transmit images, much less audio and video. 
+A: No, Discord Rich Presence doesn't allow you to transmit music. You can look at other rich presences and see they don't play music either. For example, Spotify- if any Discord Rich Presence were to have it, it'd be that one (they have a special relationship with Discord and get access to special functionalities ordinary plug-ins don't have), and they don't have it. Their rich presence has a link on it you can click that opens Spotify in your browser, presumably at the same stream. The rich presence itself doesn't play music or video. Discord Rich Presence API doesn't even allow plug-ins to transmit images, much less audio and video.
 
 If you want to stream audio to a particular server, Discord has a more heavyweight feature GoLive, which streams audio+video.
 
 **Q: I can't seem to get the plug-in to start.**
 
-A: One thing to check, is if you close Winamp and go to your Winamp installation folder, i.e., 
+A: One thing to check, is if you close Winamp and go to your Winamp installation folder, i.e.,
+
 ```
 C:\Program Files (x86)\Winamp\Plugins\DiscordRichPresence
 ```
-Verify that settings.ini contains 
+
+Verify that settings.ini contains
 ApplicationID:xxx (your Application/Client ID and not all zeores)
 
 you may need to edit it manually to set it. This is necessary if Winamp was run as a limited-privilege user without the permission to change the settings file in the plugin folder.
