@@ -56,7 +56,7 @@ The only thing to do here is to take note of the **Client ID**, also called an *
 
 2. Close Winamp.
 
-3. Run the installer from the release tab. This will automatically place the plugin DLL in the Winamp folder for you + if Microsoft C++ Redistributable for Visual Studio 2015 is not installed, it will ask if you would like to install it. (Microsoft C++ Redistributable for Visual Studio 2015 is required for this plugin to work.)
+3. Run the installer from the [release](https://github.com/Aholicknight/wdrp/releases/tag/exeinstaller) tab. This will automatically place the plugin DLL in the Winamp folder for you + if Microsoft C++ Redistributable for Visual Studio 2015 is not installed, it will ask if you would like to install it. (Microsoft C++ Redistributable for Visual Studio 2015 is required for this plugin to work.)
 
 4. Now open Winamp (or restart it if it was already open), and go to **Preferences**.
 
