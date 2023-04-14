@@ -142,4 +142,4 @@ VS Code is supported as well. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup a
 
 **Q: I have a question or other comment.**
 
-A: Please contact cmlandrews at gmail dot com. Thank you for your feedback!
+A: I've started focusing my attention on other projects. As such, I don't currently have the bandwidth to do this maintenance on this project any more, so if you reach out or open issues you might have a better result investigating them yourself.
