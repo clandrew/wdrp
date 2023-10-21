@@ -3,6 +3,9 @@
 #include "DiscordRichPresence.h"
 #include "SettingsFile.h"
 
+//initialize the static variable
+bool PresenceInfo::m_discordConnected = false;
+
 PresenceInfo::PresenceInfo()
 	: m_initializeFn{}
 	, m_shutdownFn{}
@@ -16,6 +19,7 @@ PresenceInfo::PresenceInfo()
 	CurrentPlaybackState = Stopped;
 	m_lowLevelTrackTitleIsUrl = false;
 }
+
 
 void PresenceInfo::SetStateText(char const* str)
 {
@@ -77,14 +81,17 @@ bool PresenceInfo::HasDiscordModuleLoaded() const
 
 static void handleDiscordReady(const DiscordUser* connectedUser)
 {
+	PresenceInfo::SetDiscordRPCConnectStatus(true);
 }
 
 static void handleDiscordError(int errcode, const char* message)
 {
+	PresenceInfo::SetDiscordRPCConnectStatus(false);
 }
 
 static void handleDiscordDisconnected(int errcode, const char* message)
 {
+	PresenceInfo::SetDiscordRPCConnectStatus(false);
 }
 
 static void handleDiscordJoinGame(const char* secret)
@@ -97,6 +104,15 @@ static void handleDiscordSpectateGame(const char* secret)
 
 static void handleDiscordJoinRequest(const DiscordUser* request)
 {
+}
+
+void PresenceInfo::SetDiscordRPCConnectStatus(bool connected)
+{
+	m_discordConnected = connected;
+}
+bool PresenceInfo::IsDiscordRPCConnected()
+{
+	return HasDiscordModuleLoaded() && m_discordConnected;
 }
 
 void PresenceInfo::InitializeDiscordRPC()
@@ -137,5 +153,6 @@ void PresenceInfo::ShutdownDiscordRPC()
 	if (m_hDiscordModule)
 	{
 		m_shutdownFn();
+		PresenceInfo::SetDiscordRPCConnectStatus(false);
 	}
 }

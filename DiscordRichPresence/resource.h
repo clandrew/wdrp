@@ -8,6 +8,7 @@
 #define IDC_BUTTON_APPLY                1004
 #define IDC_CHECK1                      1005
 #define IDC_SHOW_ELAPSED_TIME           1005
+#define IDC_SEND_WHEN_PAUSE_OR_STOPPED  1008
 
 // Next default values for new objects
 // 
