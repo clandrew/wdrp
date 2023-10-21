@@ -20,7 +20,7 @@ Example:
 # Frequently Asked Questions (F.A.Q.'s)
 **Q: Winamp, really? In {current year}?**
 
-A: Yeah. Some people like it :P
+A: Yep
 
 **Q: How does it work?**
 
@@ -100,9 +100,9 @@ A: No, the plugin doesn't ask for your credentials.
 
 **Q: How come the status says "Playing a game" instead of "Listening to" like with Spotify?**
 
-A: The Discord RPC library doesn't (at the time of writing this) currently expose a way of changing this UI element. The status for Spotify worked because Discord gave Spotify special treatment. If it comes to be that the RPC library adds flexibility of changing this, I'd be interested in adopting it.
+A: The Discord RPC library doesn't (at the time of writing this) currently expose a way for 3rd party plugins to change this UI element. The status for Spotify worked because Discord gave Spotify special treatment. If the RPC library adds flexibility of changing this, I'd be interested in adopting it.
 
-Update (6/28/2019): it looks like Discord is distributing a new SDK called GameSDK, and ultimately the RPC SDK will become deprecated. From a quick glance at the [docs](https://discordapp.com/developers/docs/game-sdk/activities), it looks like the new SDK supports the ability to customize this. If so, great! I think it is kind of a hassle I need to move the plugin to a new SDK just to get this small feature, but I suppose they are phasing out the RPC SDK anyway. I can take a look at GameSDK and see how easy or hard it is to make it work and start there.
+Update (6/28/2019): Discord is distributing a new SDK called GameSDK to eventually replace the RPC SDK this uses. The [docs](https://discordapp.com/developers/docs/game-sdk/activities) say the new SDK supports the ability to customize this. But when I tried it, it didn't work. I had a weird back-and-forth with Discord folks about it. They told me basically it's there but not hooked up.
 
 **Q: Sometimes, I'm seeing a small delay before my Discord Rich Presence status is updated. What gives?**
 
@@ -110,8 +110,9 @@ A: Discord thresholds the update frequency of the status text on its side. The f
 
 **Q: Is there a way to get it to show album art?**
 
-A: Currently, proabably not, but at some point it might be doable.
-One half of it would work fine- I can query Winamp for the art. The other missing half is to send it up to Discord. Discord doesn't, at the time of this writing, allow any "real" sort of programmatic upload of images- all images need to be uploaded through the Developer Portal web site. This is discussed a bit in their [FAQ](https://discordapp.com/developers/docs/rich-presence/faq) and [this Reddit thread](https://www.reddit.com/r/discordapp/comments/7fu2v5/i_made_spotify_rich_presence_i_think_its_nice/). If I could send images up with the RPC data, that would be perfect, but I'd be okay with anything really. I think it's likely they will remove this restriction at some point.
+A: Currently, proabably not. At some point it might be doable.
+
+One half of it would work fine- I can query Winamp for the art. The other missing half is to send it up to Discord. Discord doesn't, at the time of this writing, allow any "real" sort of programmatic upload of images- all images need to be uploaded through the Developer Portal web site. This is discussed a bit in their [FAQ](https://discordapp.com/developers/docs/rich-presence/faq) and [this Reddit thread](https://www.reddit.com/r/discordapp/comments/7fu2v5/i_made_spotify_rich_presence_i_think_its_nice/). If I could send images up with the RPC data, that would be perfect, but I'd be okay with anything really. 
 
 **Q: Will other people be able to hear the music I'm listening to?**
 
@@ -142,4 +143,4 @@ VS Code is supported as well. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup a
 
 **Q: I have a question or other comment.**
 
-A: I've started focusing my attention on other projects. As such, I don't currently have the bandwidth to do this maintenance on this project any more, so if you reach out or open issues you might have a better result investigating them yourself.
+A: Setting expectations: I've started focusing my attention on other projects. So I don't have capacity to do this maintenance on this project any more. If you reach out or open issues you might have a better result investigating them yourself.
