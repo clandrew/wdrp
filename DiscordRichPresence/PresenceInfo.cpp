@@ -11,7 +11,8 @@ PresenceInfo::PresenceInfo()
 	, m_hDiscordModule{}
 {
 	memset(&m_presence, 0, sizeof(m_presence));
-	m_presence.largeImageKey = "winamp-logo";
+	m_presence.largeImageKey = "large_image_winamp";
+	m_presence.largeText = "Running";
 	m_presence.instance = 1;
 	CurrentPlaybackState = Stopped;
 	m_lowLevelTrackTitleIsUrl = false;
