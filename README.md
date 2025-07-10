@@ -11,6 +11,8 @@ Tested on
 - Winamp version 5.623 (x86)
 - Winamp version 5.8 Build 3660 (x86)
 
+# Will not work on 2.95 or older!
+
 This plugin is for Windows 7/8/10+ x86-compatible environments.
 
 Example:
